@@ -5,7 +5,7 @@ import { Link } from 'expo-router'
 const index = () => {
   return (
     <View style={styles.container}>
-      <Text>Welcome to my map integration</Text>
+      <Text>Welcome to my indriver App</Text>
       {/* <Link href={'map'}>hello world</Link> */}
     </View>
   )
