@@ -27,6 +27,13 @@ export default function Layout() {
     },
   }}
 />
+<Drawer.Screen
+          name="city/[id]"
+          options={{
+            drawerLabel: 'City',
+            title: 'City View',
+          }}
+        />
         <Drawer.Screen
           name="index"
           options={{
@@ -34,13 +41,7 @@ export default function Layout() {
             title: 'Overview',
           }}
         />
-        <Drawer.Screen
-          name="map/[id]"
-          options={{
-            drawerLabel: 'Map',
-            title: 'Map View',
-          }}
-        />
+       
       </Drawer>
     </GestureHandlerRootView>
   );
