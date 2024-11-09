@@ -162,7 +162,7 @@ const map = () => {
           value={search}
           placeholder="Search"
         />
-        {places && (
+        {search && places && (
           <FlatList
             data={places}
             renderItem={({ item }) => (
@@ -172,8 +172,9 @@ const map = () => {
                 </View>
               </TouchableOpacity>
             )}
-            keyExtractor={(item) => item.fsq_id}
-            style={{ width: 320 }} 
+            keyExtractor={(item) => item.fsq_id} 
+            style={styles.scrolballist}
+            scrollEnabled={true}
           />
         )}
       </View>
@@ -201,6 +202,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
     padding: 10,
+  },
+  scrolballist :{
+    width: 320,
+    maxHeight: 200, 
   },
   input: {
     height: 40,
