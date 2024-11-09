@@ -1,9 +1,21 @@
 import { useState, useEffect, SetStateAction } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+
+
+interface SinglePlace {
+  latitude: number;
+  longitude: number
+}
+
+interface AllPlaces {
+  fsq_id: string;
+  name: string
+}
+
 
 const map = () => {
   const data = [
@@ -19,6 +31,11 @@ const map = () => {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<null | string>(null);
   const [address,setAddress] = useState(null)
+  const [search, setSearch] = useState('')
+  const [places, setPlaces] = useState<null | AllPlaces[]>(null);
+  const [singlesearchPlace, setsinglesearchPlace] = useState<null | SinglePlace>(null);
+  const [region, setRegion] = useState<any>(null);
+  const [direction , setDirection] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -49,19 +66,64 @@ const map = () => {
   const handlePress = (id) => {
     setIcons(id === icons ? null : id); 
   };
+
+  const searchPlaces = ()=>{
+    if(!search || !location) return
+    const options = {
+      method : "GET",
+      headers: {
+        accept: 'application/json',
+        Authorization: 'fsq3qbL9ORBTq2ZaS6TUHxpAQZNDJjTlkT2lBeAynwmhZ8I='
+      }
+    };
+
+    fetch(`https://api.foursquare.com/v3/places/search?query=${search}&ll=${location.coords.latitude}%2C${location.coords.longitude}&radius=100000`, options)
+   .then(res=>res.json())
+   .then(res=>{
+     setPlaces(res.results)
+ 
+   })
+   .catch(err => console.error(err));
+  } 
+
+  const handleSelectPlace = (item:any)=>{
+    setPlaces(null)
+    const selectedPlace = {
+      latitude: item.geocodes.main.latitude,
+      longitude: item.geocodes.main.longitude
+    }
+    setsinglesearchPlace(selectedPlace)
+    setRegion({
+      latitude: selectedPlace.latitude,
+      longitude: selectedPlace.longitude,
+      latitudeDelta: 0.0001,
+      longitudeDelta: 0.0001,
+    })
+    useEffect(()=>{
+      if(search){
+        searchPlaces();
+      }
+    },[search])
+
+  }
   return (
     <View style={styles.container}>
       {
-        location && <MapView style={styles.map} initialRegion={{
-          latitude: location.coords.latitude,
-          longitude: location.coords.longitude,
-          latitudeDelta: 0.0001,
-          longitudeDelta: 0.0001,
-        }}>
+        location && <MapView style={styles.map} region={region}>
           <Marker coordinate={{
             latitude: location.coords.latitude,
             longitude: location.coords.longitude,
           }}/>
+          {
+            singlesearchPlace && (
+              <Marker
+              coordinate={{
+                latitude: singlesearchPlace.latitude,
+                longitude: singlesearchPlace.longitude,
+              }}
+              />
+            )
+          }
         </MapView>
       }
 
@@ -103,6 +165,28 @@ const map = () => {
       <Text style={styles.addressText}>Current Location: {address}</Text>
     </View>
   )}
+
+  <View>
+  <TextInput
+        style={styles.input}  
+        onChangeText={(text)=>setSearch(text)}
+        value={search}
+        placeholder="search"
+      />
+      {
+        places && <FlatList
+        data={places}
+       renderItem={({item})=>{
+        <TouchableOpacity onPress={()=>handleSelectPlace(item)}>
+                <View style={styles.list}>
+                  <Text>{item.name}</Text>
+                </View>
+        </TouchableOpacity>
+       }}
+       keyExtractor={(item=>item.fsq_id)}
+        />
+      }
+  </View>
 </View>
 
    
@@ -119,12 +203,33 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     alignItems: 'center',
     paddingTop: 20,
+    backgroundColor:'white'
   },
   flatcontainer: {
     flexGrow: 0,
   },
   flatlistContent: {
     paddingHorizontal: 10,
+  },
+  button: {
+    alignItems: 'center',
+    backgroundColor: '#DDDDDD',
+    padding: 10,
+  },
+  input: {
+    height: 40,
+    width: 320,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius:10
+  },
+  list: {
+    backgroundColor: 'gray',
+    borderBottomColor: 'black',
+    borderBottomWidth: 1,
+    padding: 5,
+    width: 280
   },
   item: {
     flexDirection: 'row',
@@ -136,7 +241,6 @@ const styles = StyleSheet.create({
   addressContainer: {
     marginTop: 20,
     padding: 10,
-    backgroundColor: '#f0f0f0',
     borderRadius: 8,
     alignSelf: 'stretch',
     alignItems: 'center',
