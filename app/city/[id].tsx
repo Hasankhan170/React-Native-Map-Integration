@@ -1,19 +1,9 @@
 import { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TextInput } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-interface SinglePlace {
-  latitude: number;
-  longitude: number
-}
-
-interface AllPlaces {
-  fsq_id: string;
-  name: string
-}
 
 const map = () => {
   const data = [
@@ -25,14 +15,44 @@ const map = () => {
     { id: '6', name: 'Couriers', icon: 'envelope' },
     { id: '7', name: 'Freight', icon: 'truck' },
   ];
+
   const [icons, setIcons] = useState(null);
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<null | string>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [search, setSearch] = useState<string>('');
-  const [places, setPlaces] = useState<AllPlaces[] | null>(null);
-  const [singlesearchPlace, setsinglesearchPlace] = useState<SinglePlace | null>(null);
+  const [places, setPlaces] = useState<any[]>([]);
+  const [singlesearchPlace, setsinglesearchPlace] = useState<any | null>(null);
   const [region, setRegion] = useState<any>(null);
+  const [routeCoordinates, setRouteCoordinates] = useState([]);
+
+  const GRAPHHOPPER_API_KEY = 'fa1e1eaf-80ea-431a-ac6e-a03c33117690';
+
+  const fetchGraphhopperDirections = async (origin, destination) => {
+    const url = `https://graphhopper.com/api/1/route?point=${origin.latitude},${origin.longitude}&point=${destination.latitude},${destination.longitude}&vehicle=car&locale=en&instructions=false&points_encoded=false&key=${GRAPHHOPPER_API_KEY}`;
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data.paths && data.paths.length > 0) {
+        return data.paths[0].points.coordinates.map(([lon, lat]) => ({
+          latitude: lat,
+          longitude: lon
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching directions from GraphHopper:', error);
+    }
+    return [];
+  };
+
+  useEffect(() => {
+    if (location && singlesearchPlace) {
+      fetchGraphhopperDirections(
+        { latitude: location.coords.latitude, longitude: location.coords.longitude },
+        { latitude: singlesearchPlace.latitude, longitude: singlesearchPlace.longitude }
+      ).then((coordinates) => setRouteCoordinates(coordinates));
+    }
+  }, [location, singlesearchPlace]);
 
   useEffect(() => {
     (async () => {
@@ -45,6 +65,13 @@ const map = () => {
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
 
+      setRegion({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      });
+
       const [geoAddress] = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
@@ -56,8 +83,8 @@ const map = () => {
   useEffect(() => {
     if (search) {
       searchPlaces();
-    }else{
-      setPlaces(null);
+    } else {
+      setPlaces([]);
     }
   }, [search]);
 
@@ -68,7 +95,7 @@ const map = () => {
   const searchPlaces = () => {
     if (!search || !location) return;
     const options = {
-      method: "GET",
+      method: 'GET',
       headers: {
         accept: 'application/json',
         Authorization: 'fsq3qbL9ORBTq2ZaS6TUHxpAQZNDJjTlkT2lBeAynwmhZ8I='
@@ -78,15 +105,14 @@ const map = () => {
     fetch(`https://api.foursquare.com/v3/places/search?query=${search}&ll=${location.coords.latitude}%2C${location.coords.longitude}&radius=100000`, options)
       .then(res => res.json())
       .then(res => {
-        console.log("Places fetched:", res.results);
         setPlaces(res.results);
       })
       .catch(err => console.error(err));
-  }
+  };
 
-  const handleSelectPlace = (item: any) => {
+  const handleSelectPlace = (item) => {
     setSearch(item.name); 
-    setPlaces(null); 
+    setPlaces([]);
     const selectedPlace = {
       latitude: item.geocodes.main.latitude,
       longitude: item.geocodes.main.longitude
@@ -95,10 +121,10 @@ const map = () => {
     setRegion({
       latitude: selectedPlace.latitude,
       longitude: selectedPlace.longitude,
-      latitudeDelta: 0.01,
-      longitudeDelta: 0.01,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.05,
     });
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -114,6 +140,14 @@ const map = () => {
                 latitude: singlesearchPlace.latitude,
                 longitude: singlesearchPlace.longitude,
               }}
+            />
+          )}
+
+          {routeCoordinates.length > 0 && (
+            <Polyline
+              coordinates={routeCoordinates}
+              strokeColor="blue"
+              strokeWidth={3}
             />
           )}
         </MapView>
@@ -180,7 +214,7 @@ const map = () => {
       </View>
     </View>
   );
-}
+};
 
 export default map;
 
