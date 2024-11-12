@@ -30,9 +30,11 @@ const indriveData = () => {
     const handleBookRide = (driverName: string) => {
         Alert.alert("Your ride is confirmed!", `You have booked a ride with ${driverName}.`);
     };
+    const [isBooked, setIsBooked] = useState();
   return (
     <View style={styles.container}>
    {allData.map((driver, index) => (
+     
     <View key={index} style={styles.card}>
         <Text style={styles.cardTitle}>Driver {index + 1}</Text>
         <Text style={styles.cardText}>Name: {driver.name}</Text>
@@ -56,14 +58,15 @@ const indriveData = () => {
                         )}
 
         
-        <TouchableOpacity
-            style={styles.button}
-            onPress={() => {   
-                alert('Your ride is confirmed!');
-            }}
-        >
-            <Text style={styles.buttonText}>Book Ride</Text>
-        </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => {handleBookRide}} >
+                <Text style={styles.buttonText}>Book Ride</Text>
+              </TouchableOpacity>
+            
+             
+          
     </View>
 ))}
 </View>
