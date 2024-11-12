@@ -32,7 +32,7 @@ const map = () => {
 
   //api sy route ka data fetch krta ha origin or destination ki lat/lon le kr
   //route ko calculate krta ha or route coordinates return krta h
-  const fetchGraphhopperDirections = async (origin, destination) => {
+  const fetchGraphhopperDirections = async (origin:any, destination:any) => {
     const url = `https://graphhopper.com/api/1/route?point=${origin.latitude},${origin.longitude}&point=${destination.latitude},${destination.longitude}&vehicle=car&locale=en&instructions=false&points_encoded=false&key=${GRAPHHOPPER_API_KEY}`;
     try {
       const response = await fetch(url);
@@ -98,7 +98,7 @@ const map = () => {
     }
   }, [search]);
 
-  const handlePress = (id) => {
+  const handlePress = (id:any) => {
     setIcons(id === icons ? null : id);
   };
  //ye function Foursquare API se places search karta hai
@@ -120,7 +120,7 @@ const map = () => {
       .catch(err => console.error(err));
   };
 
-  const handleSelectPlace = (item) => {
+  const handleSelectPlace = (item:any) => {
     setSearch(item.name); 
     setPlaces([]);
     const selectedPlace = {

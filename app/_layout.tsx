@@ -8,7 +8,7 @@ import { auth } from '@/config/config';
 
 export default function Layout() {
   
-  const [Login,setLoign] = useState(false)
+  const [isLoggedIn,setLoign] = useState(false)
 
   useEffect(()=>{
     const unsubscribe = auth.onAuthStateChanged(user=>{
@@ -97,20 +97,23 @@ export default function Layout() {
             title: 'Help',
           }}
         />  
-        <Drawer.Screen
-          name="index"
-          options={{
-            drawerLabel: 'Home',
-            title: 'Overview',
-          }}
-        />
-        <Drawer.Screen
-          name="login"
-          options={{
-            drawerLabel: 'login',
-            title: 'Login',
-          }}
-        />
+      
+    
+        {/* <Drawer.Screen
+              name="login"
+              options={{
+                drawerLabel: 'Login',
+                title: 'Login',
+              }}
+            />
+       
+            <Drawer.Screen
+              name="index"
+              options={{
+                drawerLabel: 'Home',
+                title: 'Overview',
+              }}
+            /> */}
          <Drawer.Screen
           name="driver/[id]"
           options={{
