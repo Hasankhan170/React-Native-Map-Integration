@@ -2,9 +2,21 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
 import { Image,View, Linking, StyleSheet, Text} from 'react-native';
 import { Link } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { auth } from '@/config/config';
 
 
 export default function Layout() {
+  
+  const [Login,setLoign] = useState(false)
+
+  useEffect(()=>{
+    const unsubscribe = auth.onAuthStateChanged(user=>{
+      setLoign(!!user)
+    })
+    return unsubscribe;
+  },[])
+
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -23,8 +35,8 @@ export default function Layout() {
       />
     ),
     drawerLabelStyle: {
-      marginLeft: -30
-    },
+      marginLeft: -30,
+    }
   }}
 />
         <Drawer.Screen
@@ -90,6 +102,13 @@ export default function Layout() {
           options={{
             drawerLabel: 'Home',
             title: 'Overview',
+          }}
+        />
+        <Drawer.Screen
+          name="login"
+          options={{
+            drawerLabel: 'login',
+            title: 'Login',
           }}
         />
          <Drawer.Screen
