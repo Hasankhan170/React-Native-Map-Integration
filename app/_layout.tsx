@@ -1,8 +1,11 @@
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { Drawer } from 'expo-router/drawer';
-import { Image } from 'react-native';
+import { Image,View, Linking, StyleSheet, Text} from 'react-native';
+import { Link } from 'expo-router';
+
 
 export default function Layout() {
+
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Drawer>
@@ -20,20 +23,68 @@ export default function Layout() {
       />
     ),
     drawerLabelStyle: {
-      marginLeft: -10,
-    },
-    drawerIconContainerStyle: {
-      marginRight: -10,
+      marginLeft: -30
     },
   }}
 />
-<Drawer.Screen
+        <Drawer.Screen
           name="city/[id]"
           options={{
             drawerLabel: 'City',
             title: 'City View',
           }}
         />
+
+        <Drawer.Screen
+          name="request/[id]"
+          options={{
+            drawerLabel: 'Request history',
+            title: 'Request',
+          }}
+        />
+        <Drawer.Screen
+          name="couriers/[id]"
+          options={{
+            drawerLabel: 'Couriers',
+            title: 'Couriers',
+          }}
+        />
+        <Drawer.Screen
+          name="citytocity/[id]"
+          options={{
+            drawerLabel: 'City to City',
+            title: 'City to City',
+          }}
+        />
+        <Drawer.Screen
+          name="freight/[id]"
+          options={{
+            drawerLabel: 'Freight',
+            title: 'Freight',
+          }}
+        />
+        <Drawer.Screen
+          name="safety/[id]"
+          options={{
+            drawerLabel: 'Safety',
+            title: 'Safety',
+          }}
+        />
+        <Drawer.Screen
+          name="setting/[id]"
+          options={{
+            drawerLabel: 'Setting',
+            title: 'Setting',
+          }}
+        />
+
+        <Drawer.Screen
+          name="help/[id]"
+          options={{
+            drawerLabel: 'Help',
+            title: 'Help',
+          }}
+        />  
         <Drawer.Screen
           name="index"
           options={{
@@ -41,8 +92,38 @@ export default function Layout() {
             title: 'Overview',
           }}
         />
+         <Drawer.Screen
+          name="driver/[id]"
+          options={{
+            drawerLabel: () => (
+              <View>
+                <Link href={'https://react-in-driver.vercel.app'} style={styles.button}>  
+                <Text style={styles.buttonText}>Driver Mode</Text>
+              </Link>
+              </View>
+            ),
+            title: 'Driver',
+          }}
+        />
        
       </Drawer>
     </GestureHandlerRootView>
   );
 }
+
+
+const styles = StyleSheet.create({
+  button: {
+    paddingVertical: 10,
+    backgroundColor: '#b8fc03',
+    borderRadius: 5,
+    textAlign:'center'
+    
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 16,
+    textAlign:'center'
+  },
+
+});
