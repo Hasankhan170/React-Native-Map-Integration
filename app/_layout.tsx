@@ -19,8 +19,8 @@ export default function Layout() {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <Drawer>
+    <GestureHandlerRootView style={{ flex: 1, }}>
+      <Drawer >
       <Drawer.Screen
   name="profile/[id]"
   options={{
@@ -99,21 +99,7 @@ export default function Layout() {
         />  
       
     
-        {/* <Drawer.Screen
-              name="login"
-              options={{
-                drawerLabel: 'Login',
-                title: 'Login',
-              }}
-            />
        
-            <Drawer.Screen
-              name="index"
-              options={{
-                drawerLabel: 'Home',
-                title: 'Overview',
-              }}
-            /> */}
          <Drawer.Screen
           name="driver/[id]"
           options={{
@@ -127,6 +113,42 @@ export default function Layout() {
             title: 'Driver',
           }}
         />
+
+         <Drawer.Screen
+              name="login"
+              options={{
+                drawerLabel: 'Login',
+                title: 'Login',
+                drawerLabelStyle: {
+                  color: 'white', 
+                  backgroundColor:'white'
+                },
+              }}
+            />
+       
+            <Drawer.Screen
+              name="index"
+              options={{
+                drawerLabel: 'Home',
+                title: 'Overview',
+                drawerLabelStyle: {
+                  color: 'white',
+                  backgroundColor:'white'
+                },
+              }}
+            /> 
+
+            <Drawer.Screen
+              name="driverData"
+              options={{
+                drawerLabel: 'driverData',
+                title: 'driverData',
+                drawerLabelStyle: {
+                  color: 'white', 
+                  backgroundColor:'white'
+                },
+              }}
+            /> 
        
       </Drawer>
     </GestureHandlerRootView>

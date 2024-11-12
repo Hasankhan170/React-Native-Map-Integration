@@ -4,6 +4,8 @@ import MapView, { Marker, Polyline } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { FlatList } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { Link } from 'expo-router';
+
 
 const map = () => {
   const data = [
@@ -206,6 +208,12 @@ const map = () => {
           value={search}
           placeholder="Search"
         />
+
+          <View>
+                <Link href={"/driverData"} style={styles.buttonss}>  
+                <Text style={styles.buttonText}>Driver Mode</Text>
+              </Link>
+              </View> 
         {search && places && (
           <FlatList
             data={places}
@@ -238,6 +246,18 @@ const styles = StyleSheet.create({
   },
   flatcontainer: {
     flexGrow: 0,
+  },
+  buttonss: {
+    paddingVertical: 10,
+    backgroundColor: '#b8fc03',
+    borderRadius: 5,
+    textAlign:'center'
+    
+  },
+  buttonText: {
+    color: 'black',
+    fontSize: 16,
+    textAlign:'center'
   },
   flatlistContent: {
     paddingHorizontal: 10,
